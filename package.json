@@ -1,0 +1,13 @@
+{
+  "title": "Canvas Shadow by MultiLoginApp.com",
+  "name": "canvas-shadow",
+  "version": "1.0.0",
+  "description": "Create unique and persistent noise for hiding real canvas fingerprint",
+  "main": "index.js",
+  "author": "MultiLoginApp.com",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "",
+  "icon":"resource://@canvas-shadow/data/48x48.png"
+}

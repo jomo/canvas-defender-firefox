@@ -1,8 +1,8 @@
 {
-  "title": "Canvas Shadow by MultiLoginApp.com",
+  "title": "AntiCanvasFingerprinting - by MultiLoginApp.com",
   "name": "canvas-shadow",
-  "version": "1.0.0",
-  "description": "Create unique and persistent noise for hiding real canvas fingerprint",
+  "version": "1.0.2",
+  "description": "Instead of blocking JS-API, which is a fingerprint in itself, AntiCanvasFingerprinting creates a unique and persistent noise that hides your real canvas fingerprint.",
   "main": "index.js",
   "author": "MultiLoginApp.com",
   "engines": {

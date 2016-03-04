@@ -93,7 +93,7 @@ function main(r, g, b, a) {
         overrideCanvas(ctx, "drawImage");
 
         overrideCanvas(ctx, "putImageData");
-        overrideCanvas(ctx, "putImageData");
+        overrideCanvas(ctx, "getImageData");
     }
 
     override(document, "createElement");
@@ -103,11 +103,26 @@ function main(r, g, b, a) {
     override(document, "getElementsByClassName");
     override(document, "getElementsByTagName");
     override(document, "getElementsByTagNameNS");
+
+    var scriptNode = document.getElementById("anticanvasfingerprinting");
+    scriptNode.parentNode.removeChild(scriptNode);
 }
 
 var script = document.createElement("script");
+script.id = "anticanvasfingerprinting";
 script.type = "text/javascript";
-
-var newChild = document.createTextNode('(' + main + ')(' + self.options.r + ',' + self.options.g + ',' + self.options.b + ',' + self.options.a + ');');
+var newChild = document.createTextNode('try{(' + main + ')(' + self.options.r + ',' + self.options.g + ',' + self.options.b + ',' + self.options.a + ');} catch (e) {}');
 script.appendChild(newChild);
-(window.document.head || window.document.body || window.document.documentElement).appendChild(script);
+var node = (document.documentElement || document.head || document.body);
+if (typeof node[self.options.docId] === 'undefined') {
+    node.insertBefore(script, node.firstChild);
+    node[self.options.docId] = getRandomString();
+}
+
+function getRandomString() {
+    var text = "";
+    var charset = "abcdefghijklmnopqrstuvwxyz";
+    for (var i = 0; i < 5; i++)
+        text += charset.charAt(Math.floor(Math.random() * charset.length));
+    return text;
+}

@@ -5,9 +5,9 @@
           <em:type>2</em:type>
           <em:bootstrap>true</em:bootstrap>
           <em:unpack>false</em:unpack>
-          <em:version>1.0.0</em:version>
-          <em:name>Canvas Shadow by MultiLoginApp.com</em:name>
-          <em:description>Create unique and persistent noise for hiding real canvas fingerprint</em:description>
+          <em:version>1.0.2</em:version>
+          <em:name>AntiCanvasFingerprinting - by MultiLoginApp.com</em:name>
+          <em:description>Instead of blocking JS-API, which is a fingerprint in itself, AntiCanvasFingerprinting creates a unique and persistent noise that hides your real canvas fingerprint.</em:description>
           <em:creator>MultiLoginApp.com</em:creator>
           <em:iconURL>resource://@canvas-shadow/data/48x48.png</em:iconURL>
 

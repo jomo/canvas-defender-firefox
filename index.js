@@ -1,5 +1,6 @@
-var ss = require("sdk/simple-storage");
+const {Cc, Ci} = require('chrome');
 
+var ss = require("sdk/simple-storage");
 var data;
 
 var storageData = ss.storage.data;
@@ -12,6 +13,7 @@ if (storageData == undefined) {
 
 var pageMod;
 
+var docId = getRandomString();
 function inject() {
     pageMod = require("sdk/page-mod").PageMod({
         include: "*",
@@ -21,7 +23,8 @@ function inject() {
             r: data.r,
             g: data.g,
             b: data.b,
-            a: data.a
+            a: data.a,
+            docId: docId
         }
     });
 }
@@ -40,6 +43,9 @@ require('sdk/ui/button/action').ActionButton({
         generateNewFingerPrint();
         pageMod.destroy();
         inject();
+
+        var prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
+        prompts.alert(null, "AntiCanvasFingerprinting - by MultiLoginApp.com", "Generated a new noise for canvas");
     }
 });
 
@@ -55,4 +61,12 @@ function generateNewFingerPrint() {
 
 function randomIntFromInterval(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
+}
+
+function getRandomString() {
+    var text = "";
+    var charset = "abcdefghijklmnopqrstuvwxyz";
+    for (var i = 0; i < 5; i++)
+        text += charset.charAt(Math.floor(Math.random() * charset.length));
+    return text;
 }

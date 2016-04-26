@@ -78,7 +78,6 @@ function main(r, g, b, a) {
         //Drawing text
         overrideCanvas(ctx, "fillText");
         overrideCanvas(ctx, "strokeText");
-        //TODO //overrideCanvas(ctx, "measureText");
 
         //Drawing paths
         overrideCanvas(ctx, "fill");

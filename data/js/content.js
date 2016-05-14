@@ -27,17 +27,21 @@ function main(r, g, b, a) {
 
     function inject(element) {
         if (element.tagName.toUpperCase() === "IFRAME") {
-            if (element.contentDocument == null) {
-                //console.log("iframe contentDocument is null");
-                return;
+            try {
+                if (element.contentDocument == null) {
+                    //console.log("iframe contentDocument is null");
+                    return;
+                }
+                override(element.contentDocument, "createElement");
+                override(element.contentDocument, "createElementNS");
+                override(element.contentDocument, "getElementById");
+                override(element.contentDocument, "getElementsByName");
+                override(element.contentDocument, "getElementsByClassName");
+                override(element.contentDocument, "getElementsByTagName");
+                override(element.contentDocument, "getElementsByTagNameNS");
+            } catch (e) {
+                //console.log(e);
             }
-            override(element.contentDocument, "createElement");
-            override(element.contentDocument, "createElementNS");
-            override(element.contentDocument, "getElementById");
-            override(element.contentDocument, "getElementsByName");
-            override(element.contentDocument, "getElementsByClassName");
-            override(element.contentDocument, "getElementsByTagName");
-            override(element.contentDocument, "getElementsByTagNameNS");
         } else if (element.tagName.toUpperCase() === "CANVAS") {
             var ctx = element.getContext("2d");
             injectCanvas(ctx, element.height, element.width);

@@ -10,38 +10,15 @@ if (window.frameElement != null && window.frameElement.sandbox != null) {
 }
 function main(r, g, b, a, scriptId) {
     var scriptNode = document.getElementById(scriptId);
-    var canvasElems = {};
     function overrideCanvasProto(root) {
-        var orig = root.prototype.getContext;
-        Object.defineProperty(root.prototype, "getContext",
-            {
-                value: function () {
-                    var res = orig.apply(this, arguments);
-                    canvasElems[res] = this;
-                    return res;
-                }
-            }
-        );
-    }
-    function overrideCanvaRendProto(root) {
-        var getImageData = root.prototype.getImageData;
-        var putImageData = root.prototype.putImageData;
-        function overrideProtoFunct(old, name) {
+        function overrideCanvasInternal(name, old) {
             Object.defineProperty(root.prototype, name,
                 {
                     value: function () {
-                        //console.log(name + "call");
-                        old.apply(this, arguments);
-                        var canvasElem = canvasElems[this];
-                        var width = 300;
-                        var height = 150;
-                        if (canvasElem) {
-                            width = canvasElem.width;
-                            height = canvasElem.height;
-                        } else {
-                            console.log("canvas size is unknown");
-                        }
-                        var imageData = getImageData.call(this, 0, 0, width, height);
+                        var width = this.width;
+                        var height = this.height;
+                        var context = this.getContext("2d");
+                        var imageData = context.getImageData(0, 0, width, height);
                         for (var i = 0; i < height; i++) {
                             for (var j = 0; j < width; j++) {
                                 var index = ((i * (width * 4)) + (j * 4));
@@ -51,40 +28,50 @@ function main(r, g, b, a, scriptId) {
                                 imageData.data[index + 3] = imageData.data[index + 3] + a;
                             }
                         }
-                        putImageData.call(this, imageData, 0, 0);
+                        context.putImageData(imageData, 0, 0);
+                        return old.apply(this, arguments);
                     }
                 }
             );
         }
-        overrideProtoFunct(root.prototype.clearRect, "clearRect");
-        overrideProtoFunct(root.prototype.fillRect, "fillRect");
-        overrideProtoFunct(root.prototype.strokeRect, "strokeRect");
-        //Drawing text
-        overrideProtoFunct(root.prototype.fillText, "fillText");
-        overrideProtoFunct(root.prototype.strokeText, "strokeText");
-        //TODO
-        //   overrideProtoFunct(root.prototype.measureText, "measureText");
-        //Drawing paths
-        overrideProtoFunct(root.prototype.fill, "fill");
-        //overrideProtoFunct(root.prototype.stroke, "stroke");
-        overrideProtoFunct(root.prototype.drawFocusIfNeeded, "drawFocusIfNeeded");
-        overrideProtoFunct(root.prototype.clip, "clip");
-        overrideProtoFunct(root.prototype.isPointInPath, "isPointInPath");
-        overrideProtoFunct(root.prototype.isPointInStroke, "isPointInStroke");
-        //Drawing images
-        overrideProtoFunct(root.prototype.drawImage, "drawImage");
-        overrideProtoFunct(root.prototype.putImageData, "putImageData");
-        overrideProtoFunct(root.prototype.getImageData, "getImageData");
+        overrideCanvasInternal("toDataURL", root.prototype.toDataURL);
+        overrideCanvasInternal("toBlob", root.prototype.toBlob);
+        overrideCanvasInternal("mozGetAsFile", root.prototype.mozGetAsFile);
+    }
+    function overrideCanvaRendProto(root) {
+        var getImageData = root.prototype.getImageData;
+        Object.defineProperty(root.prototype, "getImageData",
+            {
+                value: function () {
+                    var imageData = getImageData.apply(this, arguments);
+                    var height = imageData.height;
+                    var width = imageData.width;
+                    //console.log("getImageData " + width + " " + height);
+                    for (var i = 0; i < height; i++) {
+                        for (var j = 0; j < width; j++) {
+                            var index = ((i * (width * 4)) + (j * 4));
+                            imageData.data[index + 0] = imageData.data[index + 0] + r;
+                            imageData.data[index + 1] = imageData.data[index + 1] + g;
+                            imageData.data[index + 2] = imageData.data[index + 2] + b;
+                            imageData.data[index + 3] = imageData.data[index + 3] + a;
+                        }
+                    }
+                    return imageData;
+                }
+            }
+        );
     }
     function inject(element) {
-        if (element.tagName.toUpperCase() === "IFRAME") {
+        if (element.tagName.toUpperCase() === "IFRAME" && element.contentWindow) {
             try {
-                overrideCanvasProto(element.contentWindow.HTMLCanvasElement);
-                overrideCanvaRendProto(element.contentWindow.CanvasRenderingContext2D);
-                overrideDocumentProto(element.contentWindow.Document);
+                var hasAccess = element.contentWindow.HTMLCanvasElement;
             } catch (e) {
-                console.error(e);
+                console.log("can't access " + e);
+                return;
             }
+            overrideCanvasProto(element.contentWindow.HTMLCanvasElement);
+            overrideCanvaRendProto(element.contentWindow.CanvasRenderingContext2D);
+            overrideDocumentProto(element.contentWindow.Document);
         }
     }
     function overrideDocumentProto(root) {

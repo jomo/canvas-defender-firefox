@@ -5,7 +5,7 @@
           <em:type>2</em:type>
           <em:bootstrap>true</em:bootstrap>
           <em:unpack>false</em:unpack>
-          <em:version>1.0.7</em:version>
+          <em:version>1.0.8</em:version>
           <em:name>Canvas Defender</em:name>
           <em:description>Instead of blocking JS-API, which is a fingerprint in itself, Canvas Defender creates a unique and persistent noise that hides your real canvas fingerprint.</em:description>
           <em:creator>MultiLoginApp.com</em:creator>

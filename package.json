@@ -1,7 +1,7 @@
 {
   "title": "Canvas Defender",
   "name": "canvas-shadow",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Instead of blocking JS-API, which is a fingerprint in itself, Canvas Defender creates a unique and persistent noise that hides your real canvas fingerprint.",
   "main": "data/js/index.js",
   "author": "MultiLoginApp.com",
